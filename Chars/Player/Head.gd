@@ -10,6 +10,9 @@ var jump_force = 400
 var motion = Vector2.ZERO
 var can_move = true
 
+func _ready():
+	motion.y = -jump_force/2
+
 func _physics_process(delta):
 	
 	if test_move(transform,Vector2.DOWN):
@@ -37,4 +40,5 @@ func _physics_process(delta):
 	motion = move_and_slide(motion,Vector2.UP)
 
 func reach():
+	get_parent().get_node("Player").return_function()
 	queue_free()

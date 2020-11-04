@@ -1,9 +1,11 @@
 extends Area2D
 
-var velocity = Vector2(350,0)
+var velocity = Vector2(0,0)
 
 func _process(delta):
-	velocity.y += gravity*delta
+#	gravity = PlayerSheet.shoot_gravity
+	velocity.y += gravity*delta*PlayerSheet.shoot_gravity
+	velocity.x = PlayerSheet.shoot_force
 	position += velocity * delta
 	rotation = velocity.angle()
 

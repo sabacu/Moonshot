@@ -1,10 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://art_open_files/head_sprite_sheet.png" type="Texture" id=1]
-[ext_resource path="res://Chars/Player/Head.gd" type="Script" id=2]
+[ext_resource path="res://Chars/Player/Head_Rigid_Body.gd" type="Script" id=2]
 
-[sub_resource type="CircleShape2D" id=1]
-radius = 23.1512
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 23.6342, 23.5691 )
 
 [sub_resource type="Animation" id=2]
 resource_name = "idle"
@@ -24,8 +24,7 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id=3]
 resource_name = "travel"
-length = 0.4
-loop = true
+length = 0.8
 tracks/0/type = "value"
 tracks/0/path = NodePath("sprite:frame")
 tracks/0/interp = 1
@@ -33,14 +32,21 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.2 ),
-"transitions": PoolRealArray( 1, 1 ),
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 1,
-"values": [ 1, 2 ]
+"values": [ 1, 2, 1, 2 ]
 }
 
-[node name="Head" type="KinematicBody2D"]
+[sub_resource type="CircleShape2D" id=5]
+radius = 35.2953
+
+[node name="Head" type="RigidBody2D"]
 collision_layer = 2
+collision_mask = 2
+mass = 2.0
+gravity_scale = 2.0
+sleeping = true
 script = ExtResource( 2 )
 
 [node name="sprite" type="Sprite" parent="."]
@@ -49,7 +55,7 @@ texture = ExtResource( 1 )
 hframes = 3
 
 [node name="shape" type="CollisionShape2D" parent="."]
-shape = SubResource( 1 )
+shape = SubResource( 4 )
 
 [node name="anim" type="AnimationPlayer" parent="."]
 anims/idle = SubResource( 2 )
@@ -57,3 +63,12 @@ anims/travel = SubResource( 3 )
 
 [node name="head_cam" type="Camera2D" parent="."]
 current = true
+smoothing_enabled = true
+smoothing_speed = 2.0
+
+[node name="detect_touch" type="Area2D" parent="."]
+collision_layer = 8
+
+[node name="shape" type="CollisionShape2D" parent="detect_touch"]
+shape = SubResource( 5 )
+[connection signal="body_entered" from="detect_touch" to="." method="_on_detect_touch_body_entered"]
