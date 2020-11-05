@@ -12,13 +12,10 @@ var can_move = true
 var jumping = false
 var pre_bullet = preload("res://Chars/Player/Bullet.tscn")
 var pre_head = preload("res://Chars/Player/Head_Rigid_Body.tscn")
-var texture_body = preload("res://art_open_files/body_sprite_sheet.png")
-var texture_original = preload("res://art_open_files/Sprite_base.png")
 var muzzle_velocity = 350
 var muzzle_gravity = 150
 
 func _physics_process(delta):
-
 	if can_move:
 		if Input.is_action_just_pressed("shoot"):
 			shoot()
@@ -30,15 +27,19 @@ func _physics_process(delta):
 		if x_input != 0:
 			motion.x += x_input * acceleration * delta * target_fps
 			motion.x = clamp(motion.x, -max_speed, max_speed)
-		else:
-			#anim idle
-			pass
+			$sprite.flip_h = x_input < 0
+			$sprite/head.flip_h = x_input < 0
+			if not jumping:
+				$anim.play("walk")
+		
 		motion.y += gravity * delta * target_fps
 		if test_move(transform,Vector2.DOWN):
 			jumping = false
 			if x_input == 0:
+				$anim.play("idle")
 				motion.x = lerp(motion.x, 0, friction * delta)
 			if Input.is_action_just_pressed("jump"):
+				$anim.play("jump")
 				jumping = true
 				motion.y = -PlayerSheet.jump_force
 		else:
@@ -59,13 +60,13 @@ func shoot():
 
 func launch():
 	if PlayerSheet.energy > 0:
-		$sprite.texture = texture_body
+		$sprite/head.visible = false
 		var head = pre_head.instance()
 		owner.add_child(head)
-		head.position = global_position + Vector2(0,-50)
+		head.position = position + Vector2(0,-50)
 		can_move = false
 
-func return_function(position):
-	global_position = position
-	$sprite.texture = texture_original
+func return_function(target_position):
+	global_position = target_position
+	$sprite/head.visible = true
 	can_move = true
