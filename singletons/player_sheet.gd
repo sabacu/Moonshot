@@ -2,6 +2,79 @@ extends Node
 
 var jump_force = 400
 var shoot_force = 300
-var shoot_gravity = 0.8
-var max_energy = 10
-var energy = 10
+var shoot_damage = 1
+var rocket_force = 1.5
+var shield_power = 1
+
+var scrap_parts = 1000
+
+var max_energy = 8
+var max_head_energy = 3
+var max_bullet_energy = 3
+var max_shield_energy = 3
+
+var cost_energy = 10
+var cost_jump = 10
+var cost_head = 10
+var cost_bullet = 10
+var cost_shield = 10
+
+var energy = 6
+var head_energy = 0
+var bullet_energy = 0
+var shield_energy = 0
+
+var sprite_flipped = false
+var acvite_shield = false
+
+signal maximum_upgrade
+signal upgrade_did
+
+func _buy_jump():
+	if cost_jump <= scrap_parts and jump_force < 1000:
+		scrap_parts -= cost_jump
+		jump_force += 50
+		cost_jump += 10
+		emit_signal("upgrade_did")
+	else:
+		emit_signal("maximum_upgrade")
+
+func _buy_energy():
+	if cost_energy <= scrap_parts and max_energy < 30: 
+		scrap_parts -= cost_energy
+		max_energy += 1
+		cost_energy += 10
+		emit_signal("upgrade_did")
+	else:
+		emit_signal("maximum_upgrade")
+
+func _buy_rocket():
+	if rocket_force < 10 and cost_head <= scrap_parts:
+		scrap_parts -= cost_head
+		rocket_force += 0.5
+		cost_head += 10
+		max_head_energy += 1
+		emit_signal("upgrade_did")
+	else:
+		emit_signal("maximum_upgrade")
+
+func _buy_shoot():
+	if shoot_damage < 30 and cost_bullet <= scrap_parts:
+		scrap_parts -= cost_bullet
+		shoot_force += 50
+		shoot_damage += 0.5
+		cost_bullet += 10
+		max_bullet_energy += 1
+		emit_signal("upgrade_did")
+	else:
+		emit_signal("maximum_upgrade")
+
+func _buy_shield():
+	if shield_power <= 10 and cost_shield <= scrap_parts:
+		scrap_parts -= cost_shield
+		shield_power += 1
+		cost_shield += 10
+		max_shield_energy += 1
+		emit_signal("upgrade_did")
+	else:
+		emit_signal("maximum_upgrade")
